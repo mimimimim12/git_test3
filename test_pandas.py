@@ -129,3 +129,93 @@ print(titanic.dropna(axis=1).head())   #결측치가 있는 열 전체 삭제 �
 name35 = titanic.loc[titanic["Age"]>=35, ["Name","Age"]]
 print(name35.head())
 
+name35.iloc[[1,2,3],0]="no name" #1번째,2번째,3번째 행의 0번 열 선택
+print(name35.head())
+
+
+
+#pandas 데이터 통계
+#.mean() : 평균값
+#.median() : 중앙값 (중간값)
+#.describe() : 요약 통계량(평균, 중앙값, 최대값, 최소값, 사분위수 등) -> mean, std, min, 25%, 50%, 75%, max
+#.agg() : 여러 통계량을 한번에 계산 (여러개의 열에 다양한 함수 적용 가능)
+#모든 열에 여러 함수를 매핑 : group.객체.agg([함수1, 함수2,...])
+#각 열마다 다른 함수를 매필 : group.객체.agg("열이름1"=함수1, "열이름2"=함수2,...)
+#.groupby() : 특정 열을 기준으로 그룹화하여 통계량 계산 (그룹별 집계)
+#.value_counts() : 값의 개수 세기 (범주형 데이터에 유용)
+
+print("---- 평균 나이 ----")
+print(titanic["Age"].mean())
+
+print("---- 중앙값 ----")
+print(titanic["Age"].median())
+
+
+print("---- 다양한 통계량 요약 ----")
+print(titanic.describe())
+
+print("---- 나이와 요금의 평균및 표준편자 ----")
+print(titanic[["Age","Fare"]].agg(["mean", "std"]))
+
+
+print("---- 열별 사용자 집계 ----")
+
+agg_dict = {
+    "Age" : ["min", "max", "mean"],
+    "Fare" : ["median", "sum"]
+}
+print(titanic.agg(agg_dict))
+
+print("---- 성별 기준으로 평균 나이 및 요금 ----")
+print(titanic.groupby("Sex")[["Age","Fare"]].mean())
+
+print("---- 객식 등급(Pclass) 별 인원수  ----")
+print(titanic["Pclass"].value_counts())
+
+print("---- 성별 인원수 ----")
+print(titanic["Sex"].value_counts())
+
+print("---- 새로운 열 country 생성  USA ----")
+titanic["Country"]="USA"
+print(titanic)
+
+
+print("---- 기존의 열을 계산해서 새로운 열을 추가  ----")
+titanic["NewAge"] = titanic["Age"] + 10
+print(titanic)
+
+# 20세 미만이면 child, 아니면  adult
+print("---- 20세 미만이면 child, 아니면  adult ----")
+titanic["Age_group"] = "Adult" 
+titanic.loc[titanic["Age"]<20, "Age_group"] ="Child"
+print(titanic)
+
+# 데이터 프레임의 가장 마지막 인덱스 확인 후 행 추가
+new_index = len(titanic)
+print(new_index)
+print(titanic.head())
+
+titanic.loc[new_index] = [992,1,1,"shin","female",53,0,0,"Pc123",50.0,"C123","S","USA",63,"Adult"]
+new_data = pd.DataFrame({
+    "Name" : ["Alice", "Bob"],
+    "Age" : [22,30],
+    "Sex" : ["female", "male"],
+    "Survived" : [1,0]
+})
+
+titanic = pd.concat([titanic, new_data], ignore_index=True)
+
+print(titanic.tail())
+
+
+# 예 -> titanic["Name"].str.startswith("Sa")   #문자열이 데이터가 Sa 로 시작하는 자료만 추출
+# 예 -> titanic[titanic["Age"].astype(str).str.startswith("2")]  #숫자형 데이터를 문자열로 변환 후 2으로 시작하는 자료만 추출
+# 예 -> titanic[titanic["Age"].astype(str).str.startswith("^82")]  #숫자형 데이터를 문자열로 변환 후 82로 시작하는 자료만 추출
+
+
+#파일 저장
+titanic.to_csv("Titanic-Dataset.csv")  #CSV 파일로 저장
+#titanic.to_csv("./sample1.csv", index=False)  #CSV 파일로 저장, 인덱스 제외
+#titanic.to_excel("")  #엑셀 파일로 저장
+#titanic.to_excel("./sample1.xls", index=False)  #엑셀 파일로 저장, 인덱스 제외
+print("파일 저장 완료")
