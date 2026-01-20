@@ -29,13 +29,6 @@ print(step3.head(10))
 
 # step3.to_scv(" "  ,)
 
-# 과제2
-
-print("\n ------ 과제 2 시작 데이터 클렌징 및 정규화")
-
-# 1. 평균 hs코드별  중량 평균
-hs_mean = df.groupby("hs_code")["중량"].mean()
-
 
 
 
